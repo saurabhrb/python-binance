@@ -7100,7 +7100,10 @@ class Client(BaseClient):
             self.session.close()
 
     def __del__(self):
-        self.close_connection()
+        try:
+            self.close_connection()
+        except:
+            pass
 
 
 class AsyncClient(BaseClient):
