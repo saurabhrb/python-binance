@@ -49,7 +49,9 @@ class ThreadedApiManager(threading.Thread):
                     continue
                 if not msg:
                     continue
-                callback(msg)
+                # callback(msg)
+                callback_thread = threading.Thread(target=callback, name="Callback", args=(msg,), daemon=True)
+                callback_thread.start()
         del self._socket_running[path]
 
     def run(self):
