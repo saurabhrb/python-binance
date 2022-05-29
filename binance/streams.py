@@ -1181,9 +1181,9 @@ class ThreadedWebsocketManager(ThreadedApiManager):
     def __init__(
         self, api_key: Optional[str] = None, api_secret: Optional[str] = None,
         requests_params: Optional[Dict[str, str]] = None, tld: str = 'com',
-        testnet: bool = False, daemon: bool = False
+        testnet: bool = False
     ):
-        super().__init__(api_key, api_secret, requests_params, tld, testnet, daemon)
+        super().__init__(api_key, api_secret, requests_params, tld, testnet)
         self._bsm: Optional[BinanceSocketManager] = None
 
     async def _before_socket_listener_start(self):
