@@ -16,7 +16,13 @@ class ThreadedApiManager(threading.Thread):
 
         """
         super().__init__()
-        self._loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
+        try:
+            self._loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
+        except RuntimeError as ex:
+            if "There is no current event loop in thread" in str(ex):
+                self._loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
+                asyncio.set_event_loop(self._loop)
+                self._loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
         self._client: Optional[AsyncClient] = None
         self._running: bool = True
         self._socket_running: Dict[str, bool] = {}
@@ -55,7 +61,10 @@ class ThreadedApiManager(threading.Thread):
         del self._socket_running[path]
 
     def run(self):
-        self._loop.run_until_complete(self.socket_listener())
+        self._loop.call_soon(asyncio.create_task, self.socket_listener())
+        if not self._loop.is_running():
+            self._loop.run_forever()
+        # self._loop.run_until_complete(self.socket_listener())
 
     def stop_socket(self, socket_name):
         if socket_name in self._socket_running:
