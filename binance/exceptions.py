@@ -4,7 +4,7 @@ import json
 
 class BinanceAPIException(Exception):
 
-    def __init__(self, response, status_code, text):
+    def __init__(self, response, status_code, text, requests_params=None):
         self.code = 0
         try:
             json_res = json.loads(text)
@@ -16,9 +16,10 @@ class BinanceAPIException(Exception):
         self.status_code = status_code
         self.response = response
         self.request = getattr(response, 'request', None)
+        self.request_params = requests_params
 
     def __str__(self):  # pragma: no cover
-        return 'APIError(code=%s): %s' % (self.code, self.message)
+        return 'APIError(code=%s): %s\nRequestParams : %s' % (self.code, self.message, self.request_params)
 
 
 class BinanceRequestException(Exception):

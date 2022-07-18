@@ -312,16 +312,16 @@ class Client(BaseClient):
         kwargs = self._get_request_kwargs(method, signed, force_params, **kwargs)
 
         self.response = getattr(self.session, method)(uri, **kwargs)
-        return self._handle_response(self.response)
+        return self._handle_response(self.response, kwargs)
 
     @staticmethod
-    def _handle_response(response: requests.Response):
+    def _handle_response(response: requests.Response, requests_params):
         """Internal helper for handling API responses from the Binance server.
         Raises the appropriate exceptions when necessary; otherwise, returns the
         response.
         """
         if not (200 <= response.status_code < 300):
-            raise BinanceAPIException(response, response.status_code, response.text)
+            raise BinanceAPIException(response, response.status_code, response.text, requests_params)
         try:
             return response.json()
         except ValueError:
