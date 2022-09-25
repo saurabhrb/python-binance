@@ -10,12 +10,13 @@ class ThreadedApiManager(threading.Thread):
     def __init__(
         self, api_key: Optional[str] = None, api_secret: Optional[str] = None,
         requests_params: Optional[Dict[str, str]] = None, tld: str = 'com',
-        testnet: bool = False
+        testnet: bool = False,
+        daemon: bool = False
     ):
         """Initialise the BinanceSocketManager
 
         """
-        super().__init__()
+        super().__init__(daemon=daemon)
         try:
             self._loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
         except RuntimeError as ex:
