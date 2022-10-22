@@ -11,7 +11,9 @@ class ThreadedApiManager(threading.Thread):
         self, api_key: Optional[str] = None, api_secret: Optional[str] = None,
         requests_params: Optional[Dict[str, str]] = None, tld: str = 'com',
         testnet: bool = False,
-        daemon: bool = False
+        daemon: bool = False,
+        identifier: Optional[str] = ''
+        
     ):
         """Initialise the BinanceSocketManager
 
@@ -24,6 +26,7 @@ class ThreadedApiManager(threading.Thread):
                 self._loop: asyncio.AbstractEventLoop = asyncio.new_event_loop()
                 asyncio.set_event_loop(self._loop)
                 self._loop: asyncio.AbstractEventLoop = asyncio.get_event_loop()
+        self.identifier = identifier
         self._client: Optional[AsyncClient] = None
         self._running: bool = True
         self._socket_running: Dict[str, bool] = {}
@@ -57,7 +60,7 @@ class ThreadedApiManager(threading.Thread):
                 if not msg:
                     continue
                 # callback(msg)
-                callback_thread = threading.Thread(target=callback, name="Callback", args=(msg,), daemon=True)
+                callback_thread = threading.Thread(target=callback, name="Callback", args=(self.identifier, msg,), daemon=True)
                 callback_thread.start()
         del self._socket_running[path]
 
